@@ -43,8 +43,6 @@ public class TimeService {
 			parsedDate = LocalDateTime.parse(decodedDateTime);
 		} catch (IllegalArgumentException e) {
 			throw new WrongDateRestException(datetime, e);
-		} catch (UnsupportedEncodingException e) {
-			throw new WrongDateRestException(datetime, e);
 		}
 		return parsedDate;
 	}

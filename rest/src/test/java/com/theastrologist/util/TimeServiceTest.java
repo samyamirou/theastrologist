@@ -8,7 +8,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -21,8 +23,10 @@ import static org.mockito.Mockito.*;
  * Created by Samy on 27/01/2016.
  */
 @RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@WebMvcTest(RevolutionController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+//@ActiveProfiles("test")
+//@WebMvcTest(RevolutionController.class)
 public class TimeServiceTest {
 
 	@Autowired

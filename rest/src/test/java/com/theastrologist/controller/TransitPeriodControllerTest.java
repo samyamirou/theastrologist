@@ -1,6 +1,10 @@
 package com.theastrologist.controller;
 
+import com.theastrologist.RestApplication;
+import com.theastrologist.config.WebTestConfiguration;
+import com.theastrologist.data.DataConfiguration;
 import com.theastrologist.domain.Degree;
+import com.theastrologist.service.config.ServiceConfiguration;
 import com.theastrologist.util.TimeService;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
@@ -9,10 +13,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -28,8 +35,8 @@ import static org.mockito.Mockito.*;
  * Created by Samy on 16/09/2015.
  */
 @RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@WebMvcTest(TransitPeriodController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class TransitPeriodControllerTest {
 	@Autowired
 	private TimeService timeService;

@@ -6,17 +6,14 @@
     <parent>
         <groupId>com.theastrologist</groupId>
         <artifactId>theastrologist-parent</artifactId>
-        <version>1.10.2-SNAPSHOT</version>
+        <version>1.11.0-SNAPSHOT</version>
     </parent>
     <artifactId>theastrologist-rest</artifactId>
-    <packaging>war</packaging>
+    <!--<packaging>war</packaging>-->
     <name>The Astrologist - REST Web Service</name>
 
     <properties>
-        <h2.version>1.4.196</h2.version>
-        <spring.boot.version>1.5.9.RELEASE</spring.boot.version>
         <swagger.version>2.8.0</swagger.version>
-
         <start-class>com.theastrologist.RestApplication</start-class>
     </properties>
 
@@ -33,13 +30,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring.boot.version}</version>
-        </dependency>
-        <!-- marked the embedded servlet container as provided -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <version>${spring.boot.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -110,92 +100,22 @@
             <version>1.5.21</version>
         </dependency>
 
-        <!-- Tests -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring.boot.version}</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.theastrologist.RestApplication</mainClass>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>repackage</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <archive>
-                        <index>true</index>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <port>9090</port>
-                    <path>/</path>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.cargo</groupId>
-                <artifactId>cargo-maven2-plugin</artifactId>
-                <version>1.6.9</version>
-                <configuration>
-                    <container>
-                        <containerId>tomcat8x</containerId>
-                        <zipUrlInstaller>
-                            <url>http://repo1.maven.org/maven2/org/apache/tomcat/tomcat/8.5.9/tomcat-8.5.9.zip</url>
-                        </zipUrlInstaller>
-                    </container>
-                    <configuration>
-                        <type>standalone</type>
-                        <properties>
-                            <cargo.servlet.port>9090</cargo.servlet.port>
-                        </properties>
-                    </configuration>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.github.jsimone</groupId>
-                                    <artifactId>webapp-runner</artifactId>
-                                    <version>8.5.23.0</version>
-                                    <destFileName>webapp-runner.jar</destFileName>
-                                </artifactItem>
-                            </artifactItems>
+                            <mainClass>com.theastrologist.RestApplication</mainClass>
+                            <layout>JAR</layout>
                         </configuration>
                     </execution>
                 </executions>

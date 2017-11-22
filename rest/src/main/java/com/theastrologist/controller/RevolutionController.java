@@ -1,7 +1,7 @@
 package com.theastrologist.controller;
 
-import com.theastrologist.core.RevolutionCalculator;
-import com.theastrologist.core.ThemeCalculator;
+import com.theastrologist.service.RevolutionService;
+import com.theastrologist.service.ThemeService;
 import com.theastrologist.domain.Degree;
 import com.theastrologist.domain.DateTimeJson;
 import com.theastrologist.domain.SkyPosition;
@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,17 +22,23 @@ import org.springframework.web.bind.annotation.*;
 @Api(value = "/revolution", tags = "Revolution", description = "Solar and lunar revolutions")
 public class RevolutionController extends AbstractController {
 
+	@Autowired
+	private ThemeService themeService;
+
+	@Autowired
+	private RevolutionService revolutionService;
+
 	private SkyPosition calculateSkyPosition(DateTime natalDate, double natalLatitude, double natalLongitude) {
 		Degree latitudeDegree = new Degree(natalLatitude);
 		Degree longitudeDegree = new Degree(natalLongitude);
-		return ThemeCalculator.getInstance().getSkyPosition(natalDate, latitudeDegree, longitudeDegree);
+		return themeService.getSkyPosition(natalDate, latitudeDegree, longitudeDegree);
 	}
 
 	private SkyPosition getSolarRevolutionTheme(String fromDate, double anniversaryLatitude,
 												double anniversaryLongitude,
 												SkyPosition natalTheme) {
 		DateTime fromDateTime = new DateTime(fromDate);
-		DateTime solarRevolutionUT = RevolutionCalculator.getInstance().getSolarRevolutionUT(natalTheme, fromDateTime);
+		DateTime solarRevolutionUT = revolutionService.getSolarRevolutionUT(natalTheme, fromDateTime);
 		DateTime zonedDateTime = timeService
 				.convertUTDateTime(solarRevolutionUT, anniversaryLatitude, anniversaryLongitude);
 		return calculateSkyPosition(zonedDateTime, anniversaryLatitude, anniversaryLongitude);
@@ -46,7 +53,7 @@ public class RevolutionController extends AbstractController {
 											  String fromDate) {
 		SkyPosition natalTheme = getNatalTheme(natalDate, natalLatitude, natalLongitude);
 		DateTime fromDateTime = new DateTime(fromDate);
-		DateTime solarRevolutionUT = RevolutionCalculator.getInstance().getSolarRevolutionUT(natalTheme, fromDateTime);
+		DateTime solarRevolutionUT = revolutionService.getSolarRevolutionUT(natalTheme, fromDateTime);
 		return new DateTimeJson(solarRevolutionUT);
 	}
 
@@ -55,14 +62,14 @@ public class RevolutionController extends AbstractController {
 		SkyPosition natalTheme = getNatalTheme(natalDate, natalLatitude, natalLongitude);
 
 		DateTime fromDateTime = new DateTime(fromDate);
-		DateTime lunarRevolutionUT = RevolutionCalculator.getInstance().getLunarRevolutionUT(natalTheme, fromDateTime);
+		DateTime lunarRevolutionUT = revolutionService.getLunarRevolutionUT(natalTheme, fromDateTime);
 		return new DateTimeJson(lunarRevolutionUT);
 	}
 
 	private SkyPosition getLunarRevolutionTheme(String fromDate, double anniversaryLatitude,
 												double anniversaryLongitude, SkyPosition natalTheme) {
 		DateTime fromDateTime = new DateTime(fromDate);
-		DateTime lunarRevolutionUT = RevolutionCalculator.getInstance().getLunarRevolutionUT(natalTheme, fromDateTime);
+		DateTime lunarRevolutionUT = revolutionService.getLunarRevolutionUT(natalTheme, fromDateTime);
 		DateTime zonedDateTime = timeService
 				.convertUTDateTime(lunarRevolutionUT, anniversaryLatitude, anniversaryLongitude);
 		return calculateSkyPosition(zonedDateTime, anniversaryLatitude, anniversaryLongitude);

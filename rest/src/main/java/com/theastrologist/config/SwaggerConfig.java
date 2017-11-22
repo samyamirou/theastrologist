@@ -31,7 +31,7 @@ public class SwaggerConfig {
 				.title("The Astrologist REST API")
 				.description(
 						"This REST API allows to calculate astrological content based on date and location input : planetary positions, solar and lunar revolutions, transit periods.")
-				.version("1.10")
+				.version("1.11")
 				.license("Apache License Version 2.0")
 				.licenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
 				.build();

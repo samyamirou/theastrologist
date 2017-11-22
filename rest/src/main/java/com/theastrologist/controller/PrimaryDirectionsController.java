@@ -1,8 +1,7 @@
 package com.theastrologist.controller;
 
-import com.theastrologist.core.PrimaryDirectionsCalculator;
-import com.theastrologist.core.ThemeCalculator;
-import com.theastrologist.domain.DateTimeJson;
+import com.theastrologist.service.PrimaryDirectionsService;
+import com.theastrologist.service.ThemeService;
 import com.theastrologist.domain.Degree;
 import com.theastrologist.domain.SkyPosition;
 import com.theastrologist.domain.primarydirection.PrimaryDirection;
@@ -12,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,10 +26,16 @@ import java.util.SortedSet;
 @Api(value = "/primaryDirections", tags = "Primary Directions", description = "Primary directions")
 public class PrimaryDirectionsController extends AbstractController {
 
+	@Autowired
+	private ThemeService themeService;
+
+	@Autowired
+	private PrimaryDirectionsService primaryDirectionService;
+
 	private SkyPosition calculateSkyPosition(DateTime natalDate, double natalLatitude, double natalLongitude) {
 		Degree latitudeDegree = new Degree(natalLatitude);
 		Degree longitudeDegree = new Degree(natalLongitude);
-		return ThemeCalculator.getInstance().getSkyPosition(natalDate, latitudeDegree, longitudeDegree);
+		return themeService.getSkyPosition(natalDate, latitudeDegree, longitudeDegree);
 	}
 
 	private SkyPosition getNatalTheme(String natalDate, double natalLatitude, double natalLongitude) {
@@ -46,8 +52,7 @@ public class PrimaryDirectionsController extends AbstractController {
 			@ApiParam(value = "Natal location longitude", required = true) @PathVariable double natalLongitude) {
 		SkyPosition natalTheme = getNatalTheme(natalDate, natalLatitude, natalLongitude);
 
-		PrimaryDirectionsCalculator calculator = PrimaryDirectionsCalculator.getInstance();
-		return calculator.getPrimaryDirections(natalTheme);
+		return primaryDirectionService.getPrimaryDirections(natalTheme);
 	}
 
 	@ApiOperation(value = "Primary directions", produces = "application/json")
@@ -61,8 +66,6 @@ public class PrimaryDirectionsController extends AbstractController {
 		double natalLongitude = geoResult.getGeometry().getLocation().getLng();
 
 		SkyPosition natalTheme = getNatalTheme(natalDate, natalLatitude, natalLongitude);
-
-		PrimaryDirectionsCalculator calculator = PrimaryDirectionsCalculator.getInstance();
-		return calculator.getPrimaryDirections(natalTheme);
+		return primaryDirectionService.getPrimaryDirections(natalTheme);
 	}
 }

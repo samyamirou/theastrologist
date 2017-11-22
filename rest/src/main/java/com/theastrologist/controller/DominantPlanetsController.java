@@ -1,7 +1,7 @@
 package com.theastrologist.controller;
 
-import com.theastrologist.core.DominantPlanetsCalculator;
-import com.theastrologist.core.ThemeCalculator;
+import com.theastrologist.service.DominantPlanetsService;
+import com.theastrologist.service.ThemeService;
 import com.theastrologist.domain.Degree;
 import com.theastrologist.domain.SkyPosition;
 import com.theastrologist.domain.planetvalue.DominantPlanets;
@@ -9,6 +9,7 @@ import com.theastrologist.external.geoloc.GeoResult;
 import com.theastrologist.external.geoloc.GeolocException;
 import io.swagger.annotations.*;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,16 +26,22 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value = "/dominants", tags = "Dominant planets", description = "Dominant planets scores, in descendant order")
 public class DominantPlanetsController extends AbstractController {
 
+	@Autowired
+    private ThemeService themeService;
+
+	@Autowired
+	private DominantPlanetsService dominantPlanetsService;
+
 	private DominantPlanets getDominantPlanets(String datetime, double latitude, double longitude, String address) {
 		DateTime parse = timeService.parseDateTime(datetime, latitude, longitude);
 		Degree latitudeDegree = new Degree(latitude);
 		Degree longitudeDegree = new Degree(longitude);
-		SkyPosition skyPosition = ThemeCalculator.getInstance().getSkyPosition(parse, latitudeDegree, longitudeDegree);
+		SkyPosition skyPosition = themeService.getSkyPosition(parse, latitudeDegree, longitudeDegree);
 		if (address != null) {
 			skyPosition.setAddress(address);
 		}
 
-		DominantPlanets dominantPlanets = DominantPlanetsCalculator.getInstance().getDominantPlanets(skyPosition);
+		DominantPlanets dominantPlanets = dominantPlanetsService.getDominantPlanets(skyPosition);
 
 		return dominantPlanets;
 	}

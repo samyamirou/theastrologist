@@ -1,1 +1,1 @@
-web:    java $JAVA_OPTS -jar rest/target/dependency/webapp-runner.jar --port $PORT rest/target/*.war
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar rest/target/app.jar

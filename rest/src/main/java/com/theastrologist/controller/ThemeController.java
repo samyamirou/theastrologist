@@ -1,11 +1,12 @@
 package com.theastrologist.controller;
 
-import com.theastrologist.core.ThemeCalculator;
+import com.theastrologist.service.ThemeService;
 import com.theastrologist.domain.Degree;
 import com.theastrologist.domain.SkyPosition;
 import com.theastrologist.external.geoloc.*;
 import io.swagger.annotations.*;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/{datetime}")
 @Api(value = "/theme", tags = "Theme", description = "Astrological theme")
 public class ThemeController extends AbstractController {
-
-	private SkyPosition getSkyPosition(String datetime, double latitude, double longitude, String address) {
-		DateTime parse = timeService.parseDateTime(datetime, latitude, longitude);
-		Degree latitudeDegree = new Degree(latitude);
-		Degree longitudeDegree = new Degree(longitude);
-		SkyPosition skyPosition = ThemeCalculator.getInstance().getSkyPosition(parse, latitudeDegree, longitudeDegree);
-		if (address != null) {
-			skyPosition.setAddress(address);
-		}
-		return skyPosition;
-	}
 
 	@ApiOperation(value = "Calculate astral chart", produces = "application/json")
 	@ApiResponses(value = {

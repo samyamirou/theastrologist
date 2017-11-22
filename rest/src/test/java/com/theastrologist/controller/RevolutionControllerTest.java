@@ -9,7 +9,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,15 +24,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 /**
  * Created by Samy on 15/05/2017.
  */
 @RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@WebMvcTest(RevolutionController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+//@ActiveProfiles("test")
+//@WebMvcTest(RevolutionController.class)
 public class RevolutionControllerTest {
 
 	private final String TEST_NATAL_DATE = "1985-01-04T11:20:00";

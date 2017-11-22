@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.theastrologist</groupId>
     <artifactId>theastrologist-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.10.2-SNAPSHOT</version>
+    <version>1.11.0-SNAPSHOT</version>
     <name>The Astrologist - Parent</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.9.RELEASE</version>
+        <version>2.0.5.RELEASE</version>
     </parent>
 
     <scm>
@@ -43,11 +44,14 @@
         <junit.version>4.12</junit.version>
         <jpa.version>2.0</jpa.version>
         <log4j.version>1.2.17</log4j.version>
+        <spring.boot.version>2.0.5.RELEASE</spring.boot.version>
 
     </properties>
 
     <modules>
+        <module>domain</module>
         <module>service</module>
+        <module>data</module>
         <module>rest</module>
     </modules>
 
@@ -83,7 +87,19 @@
             <version>2.8.2</version>
         </dependency>
 
-        <!-- dépendances de test -->
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring.boot.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -117,6 +133,12 @@
             <scope>test</scope>
             <version>2.0.0.0</version>
         </dependency>
+        <!--<dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>-->
     </dependencies>
 
     <build>
@@ -176,6 +198,16 @@
                     <checkModificationExcludes>
                         <checkModificationExclude>pom.xml</checkModificationExclude>
                     </checkModificationExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+                <configuration>
+                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+                    <forkCount>3</forkCount>
+                    <reuseForks>true</reuseForks>
                 </configuration>
             </plugin>
         </plugins>

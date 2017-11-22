@@ -12,7 +12,6 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-//@Import(RestApplication.class)
 public class RestApplicationTest {
 	@Value("${spring.http.converters.preferred-json-mapper}")
 	private String preferredMapper;
