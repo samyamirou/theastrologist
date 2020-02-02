@@ -1,9 +1,14 @@
 package com.theastrologist.util;
 
-import com.theastrologist.domain.Degree;
-import com.theastrologist.domain.House;
-import com.theastrologist.domain.Sign;
+import com.theastrologist.core.Swieph;
+import com.theastrologist.domain.*;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeZone;
+import swisseph.SweConst;
+import swisseph.SweDate;
+import swisseph.TCPlanet;
+import swisseph.TransitCalculator;
 
 import java.util.TimeZone;
 
@@ -41,8 +46,22 @@ public class CalcUtil {
         return new Degree(equilibrate(degree.getBaseDegree()));
     }
 
+    public static Degree getArc(Degree from, Degree to) {
+        return new Degree(equilibrate(to.getBaseDegree() - from.getBaseDegree()));
+    }
+
     public static double equilibrate(double degree) {
-        return degree < 0 ? degree + 360 : degree;
+        double returnedValue;
+        if (degree == 0) {
+            returnedValue = 0L;
+        } else if (degree < 0) {
+            returnedValue = degree + 360;
+        } else if (degree > 360) {
+            returnedValue = degree - 360;
+        } else {
+            returnedValue = degree;
+        }
+        return returnedValue;
     }
 
     public static double getOpposite(double baseDegree) {

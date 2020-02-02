@@ -144,9 +144,9 @@
                         <configuration>
                             <groupId>com.swisseph</groupId>
                             <artifactId>swisseph</artifactId>
-                            <version>2.0.1</version>
+                            <version>2.0.2</version>
                             <packaging>jar</packaging>
-                            <file>${project.basedir}/lib/swisseph-2.01.00-01.jar</file>
+                            <file>${project.basedir}/lib/swisseph-2.01.00-02.jar</file>
                             <createChecksum>true</createChecksum>
                             <generatePom>true</generatePom>
                         </configuration>

@@ -75,4 +75,9 @@ public class PlanetPosition {
     public boolean isRetrograde() {
         return retrograde;
     }
+
+    @Override
+    public String toString() {
+        return this.sign.name() + " " + this.degreeInSign;
+    }
 }

@@ -1,8 +1,11 @@
 package com.theastrologist.domain;
 
+import com.google.common.math.DoubleMath;
+import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 import com.theastrologist.util.CalcUtil;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -11,7 +14,7 @@ import java.util.regex.Pattern;
 /**
  * Created by SAM on 16/11/2014.
  */
-public class Degree {
+public class Degree implements Comparable<Degree> {
     private transient double baseDegree;
     private int degree;
     private int minutes;
@@ -35,6 +38,18 @@ public class Degree {
         createDegree(degree, minutes, seconds);
     }
 
+    public Degree offset(Degree offsetDegree) {
+        return offset(offsetDegree.getBaseDegree());
+    }
+
+    public Degree offset(int offsetDegree) {
+        return offset((double)offsetDegree);
+    }
+
+    public Degree offset(double offsetDegree) {
+        return CalcUtil.equilibrate(new Degree(baseDegree + offsetDegree));
+    }
+
     private void createDegree(int degree, int minutes, double seconds) {
         this.degree = degree;
         this.minutes = minutes;
@@ -45,7 +60,7 @@ public class Degree {
     public Degree(String nextString) throws IllegalArgumentException {
         String exceptionMessage = nextString + " is not parseable to this format : xx°xx'";
         Matcher matcher = pattern.matcher(nextString);
-        List<Integer> integers = new ArrayList<Integer>(2);
+        List<Integer> integers = new ArrayList<>(2);
         if (matcher.find()) {
             for (int i = 0; i < 2; i++) {
                 String string = matcher.group(i + 1);
@@ -80,12 +95,13 @@ public class Degree {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return obj.getClass().equals(Degree.class) && this.degree == ((Degree)obj).degree && this.minutes == ((Degree)obj).minutes;
+    }
+
+    @Override
     public String toString() {
-        String string = degree + "° " + minutes + "'";
-        /*if (seconds > 0) {
-            string += " " + Math.ceil(seconds) + "\"";
-        }*/
-        return string;
+        return String.format("%02d", degree) + "° " + String.format("%02d", minutes) + "'";
     }
 
     public double getBaseDegree() {
@@ -102,5 +118,10 @@ public class Degree {
 
     public double getSeconds() {
         return seconds;
+    }
+
+    @Override
+    public int compareTo(Degree o) {
+        return DoubleMath.fuzzyCompare(this.baseDegree, o.baseDegree, 0.00001);
     }
 }

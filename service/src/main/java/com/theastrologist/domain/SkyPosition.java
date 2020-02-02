@@ -42,6 +42,11 @@ public class SkyPosition {
 		this.longitude = longitude;
 	}
 
+	public SkyPosition() {
+		this.latitude = null;
+		this.longitude = null;
+	}
+
 	public SortedMap<Planet, SortedMap<Planet, AspectPosition>> getAspects() {
 		return aspects;
 	}
@@ -56,6 +61,10 @@ public class SkyPosition {
 		fillPlanets(sw, sd);
 
 		aspects = AspectCalculator.getInstance().createAspectsForSkyPosition(this);
+	}
+
+	public void putPlanetPosition(Planet planet, PlanetPosition planetPosition) {
+		this.positions.put(planet, planetPosition);
 	}
 
 	private void fillPlanets(SwissEph sw, SweDate sd) {
@@ -159,6 +168,18 @@ public class SkyPosition {
 
 		Degree mcDegree = new Degree(mc);
 		this.positions.put(Planet.MILIEU_DU_CIEL, PlanetPosition.createPlanetPosition(mcDegree, asDegree));
+	}
+
+	public DateTime getDate() {
+		return date;
+	}
+
+	public Degree getLatitude() {
+		return latitude;
+	}
+
+	public Degree getLongitude() {
+		return longitude;
 	}
 
 	public PlanetPosition getAscendantPosition() {

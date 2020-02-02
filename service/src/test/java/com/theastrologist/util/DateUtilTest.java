@@ -1,6 +1,10 @@
 package com.theastrologist.util;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.Duration;
+import org.joda.time.Period;
+import org.junit.Ignore;
 import org.junit.Test;
 import swisseph.SweDate;
 
@@ -18,5 +22,14 @@ public class DateUtilTest {
 		SweDate sweDateUTC = DateUtil.getSweDateUTC(dateTime);
 		assertThat(sweDateUTC, notNullValue());
 		assertThat((int) sweDateUTC.getHour(), equalTo(15));
+	}
+
+	@Ignore
+	@Test
+	public void testGetPrimaryDirectionArc() throws Exception {
+		Period duration = DateUtil.convertPrimaryDirectionDuration(
+				new Period(0,3,56,0));
+
+		assertThat(duration.toStandardDays().getDays(), equalTo(365));
 	}
 }
