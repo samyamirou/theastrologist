@@ -43,7 +43,7 @@ public class IndividualControllerTest {
 
 
     private final String TEST_NATAL_DATE_STRING = "1985-01-04T11:20:00";
-    private final DateTime TEST_NATAL_DATE = DateTime.parse(TEST_NATAL_DATE_STRING);
+    private final DateTime TEST_NATAL_DATE = new DateTime(1985,1,4,11,20 ,CalcUtil.DATE_TIME_ZONE);
     private final Degree NATAL_LATITUDE = new Degree(48, 39);
     private final Degree NATAL_LONGITUDE = new Degree(2, 25);
 
