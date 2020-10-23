@@ -34,9 +34,7 @@ public class SkyPosition {
 	static final Logger LOG = Logger.getLogger(SkyPosition.class);
 	@JsonAdapter(DateTimeJSONAdapter.class)
 	private DateTime date;
-	@Transient
 	private final Degree latitude;
-	@Transient
 	private final Degree longitude;
 	private String address;
 

@@ -17,9 +17,10 @@ import java.util.regex.Pattern;
  */
 @Embeddable
 public class Degree implements Serializable, Comparable<Degree> {
-    @Transient
     private transient double baseDegree;
+    @Transient
     private int degree;
+    @Transient
     private int minutes;
     @Transient
     private transient double seconds;

@@ -3,13 +3,11 @@ package com.theastrologist.controller;
 import com.theastrologist.controller.exception.IndividualAlreadyExistsRestException;
 import com.theastrologist.controller.exception.NoResultsFoundException;
 import com.theastrologist.controller.exception.TooManyResultsRestException;
-import com.theastrologist.controller.exception.UserAlreadyExistsRestException;
 import com.theastrologist.domain.SkyPosition;
 import com.theastrologist.domain.individual.Individual;
 import com.theastrologist.domain.user.User;
 import com.theastrologist.exception.IndividualAlreadyExistsException;
 import com.theastrologist.exception.TooManyResultsException;
-import com.theastrologist.exception.UserAlreadyExistsException;
 import com.theastrologist.service.IndividualService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +78,12 @@ public class IndividualController extends AbstractController {
             throw new IndividualAlreadyExistsRestException();
         }
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand(user.getUserName()).toUri();
+        URI location = ServletUriComponentsBuilder.fromPath("/user/")
+                .path(user.getUserName())
+                .path("/individual/")
+                .path(individualName)
+                .buildAndExpand(individualName)
+                .toUri();
 
         return ResponseEntity.created(location).build();
     }

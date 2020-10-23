@@ -29,8 +29,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.io.UnsupportedEncodingException;
+
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsInstanceOf.any;
 import static org.junit.Assert.*;
@@ -40,133 +41,181 @@ import static org.junit.Assert.*;
 @AutoConfigureMockMvc
 public class IndividualControllerTest {
 
-	private final DateTime TEST_NATAL_DATE = new DateTime(1985, 1, 4, 11, 20, CalcUtil.DATE_TIME_ZONE);
-	private final DateTime TEST_REV_DATE = new DateTime(2016, 3, 12, 05, 36, CalcUtil.DATE_TIME_ZONE);
-	private final Degree NATAL_LATITUDE = new Degree(48, 39);
-	private final Degree NATAL_LONGITUDE = new Degree(2, 25);
 
-	private SkyPosition testSkyPosition;
+    private final String TEST_NATAL_DATE_STRING = "1985-01-04T11:20:00";
+    private final DateTime TEST_NATAL_DATE = DateTime.parse(TEST_NATAL_DATE_STRING);
+    private final Degree NATAL_LATITUDE = new Degree(48, 39);
+    private final Degree NATAL_LONGITUDE = new Degree(2, 25);
 
-	@Autowired
-	private ThemeService themeService;
-	@Autowired
-	private MockMvc mockMvc;
+    private SkyPosition testSkyPosition;
 
-	@MockBean
-	private UserDataService userDataService;
+    @Autowired
+    private ThemeService themeService;
 
-	@MockBean
-	private IndividualService individualService;
+    @Autowired
+    private MockMvc mockMvc;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+    @MockBean
+    private UserDataService userDataService;
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-		testSkyPosition = themeService.getSkyPosition(TEST_NATAL_DATE, NATAL_LATITUDE, NATAL_LONGITUDE);
-	}
+    @MockBean
+    private IndividualService individualService;
 
-	@Test
-	public void getIndividualOK() throws Exception, TooManyResultsException {
-		String username = "toto";
-		String individualName = "titi";
-		User user = new User(username);
-		Individual individual = new Individual(individualName);
+    @Autowired
+    private ObjectMapper objectMapper;
 
-		Mockito.when(userDataService.getUserByName(username)).thenReturn(user);
-		Mockito.when(individualService.findIndividualByName(user, individualName)).thenReturn(individual);
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        testSkyPosition = themeService.getSkyPosition(TEST_NATAL_DATE, NATAL_LATITUDE, NATAL_LONGITUDE);
+    }
 
-		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get("/user/{username}/individual/{individualName}", username, individualName)
-				.accept(MediaType.APPLICATION_JSON);
+    @Test
+    public void getIndividualOK() throws Exception, TooManyResultsException {
+        String username = "toto";
+        String individualName = "titi";
+        User user = new User(username);
+        Individual individual = new Individual(individualName);
 
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		String body = result.getResponse().getContentAsString();
-		MockHttpServletResponse response = result.getResponse();
+        Mockito.when(userDataService.getUserByName(username)).thenReturn(user);
+        Mockito.when(individualService.findIndividualByName(user, individualName)).thenReturn(individual);
 
-		assertThat(response.getStatus(), equalTo(HttpStatus.OK.value()));
-		assertThat(body, hasJsonPath("name", equalTo(individualName)));
-	}
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/user/{username}/individual/{individualName}", username, individualName)
+                .accept(MediaType.APPLICATION_JSON);
 
-	@Test
-	public void getIndividualWithPositions() throws Exception, TooManyResultsException {
-		String username = "toto";
-		String individualName = "titi";
-		User user = new User(username);
-		Individual individual = new Individual(individualName);
-		individual.setNatalTheme(testSkyPosition);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String body = result.getResponse().getContentAsString();
+        MockHttpServletResponse response = result.getResponse();
 
-		Mockito.when(userDataService.getUserByName(username)).thenReturn(user);
-		Mockito.when(individualService.findIndividualByName(user, individualName)).thenReturn(individual);
+        assertThat(response.getStatus(), equalTo(HttpStatus.OK.value()));
+        assertThat(body, hasJsonPath("name", equalTo(individualName)));
+    }
 
-		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get("/user/{username}/individual/{individualName}", username, individualName)
-				.accept(MediaType.APPLICATION_JSON);
+    @Test
+    public void getIndividualWithPositions() throws Exception, TooManyResultsException {
+        String username = "toto";
+        String individualName = "titi";
+        User user = new User(username);
+        Individual individual = new Individual(individualName);
+        individual.setNatalTheme(testSkyPosition);
 
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		String body = result.getResponse().getContentAsString();
-		MockHttpServletResponse response = result.getResponse();
+        Mockito.when(userDataService.getUserByName(username)).thenReturn(user);
+        Mockito.when(individualService.findIndividualByName(user, individualName)).thenReturn(individual);
 
-		assertThat(response.getStatus(), equalTo(HttpStatus.OK.value()));
-		assertThat(body, hasJsonPath("natalTheme.date", equalTo("1985-01-04T11:20:00+01:00")));
-	}
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/user/{username}/individual/{individualName}", username, individualName)
+                .accept(MediaType.APPLICATION_JSON);
 
-	@Test
-	public void getIndividualNoUser() throws Exception {
-		String username = "toto";
-		String individualName = "titi";
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String body = result.getResponse().getContentAsString();
+        MockHttpServletResponse response = result.getResponse();
 
-		Mockito.when(userDataService.getUserByName(username)).thenReturn(null);
+        assertThat(response.getStatus(), equalTo(HttpStatus.OK.value()));
+        assertThat(body, hasJsonPath("natalTheme.date", equalTo("1985-01-04T11:20:00+01:00")));
+    }
 
-		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get("/user/{username}/individual/{individualName}", username, individualName)
-				.accept(MediaType.APPLICATION_JSON);
+    @Test
+    public void getIndividualNoUser() throws Exception {
+        String username = "toto";
+        String individualName = "titi";
 
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		String body = result.getResponse().getContentAsString();
-		MockHttpServletResponse response = result.getResponse();
+        Mockito.when(userDataService.getUserByName(username)).thenReturn(null);
 
-		assertThat(response.getStatus(), equalTo(HttpStatus.NOT_FOUND.value()));
-	}
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/user/{username}/individual/{individualName}", username, individualName)
+                .accept(MediaType.APPLICATION_JSON);
 
-	@Test
-	public void getIndividualTooMany() throws Exception, TooManyResultsException {
-		String username = "toto";
-		String individualName = "titi";
-		User user = new User(username);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String body = result.getResponse().getContentAsString();
+        MockHttpServletResponse response = result.getResponse();
 
-		Mockito.when(userDataService.getUserByName(username)).thenReturn(user);
-		Mockito.when(individualService.findIndividualByName(user, individualName)).thenThrow(new TooManyResultsException());
+        assertThat(response.getStatus(), equalTo(HttpStatus.NOT_FOUND.value()));
+    }
 
-		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get("/user/{username}/individual/{individualName}", username, individualName)
-				.accept(MediaType.APPLICATION_JSON);
+    @Test
+    public void getIndividualTooMany() throws Exception, TooManyResultsException {
+        String username = "toto";
+        String individualName = "titi";
+        User user = new User(username);
 
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		String body = result.getResponse().getContentAsString();
-		MockHttpServletResponse response = result.getResponse();
+        Mockito.when(userDataService.getUserByName(username)).thenReturn(user);
+        Mockito.when(individualService.findIndividualByName(user, individualName)).thenThrow(new TooManyResultsException());
 
-		assertThat(response.getStatus(), equalTo(HttpStatus.BAD_REQUEST.value()));
-	}
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/user/{username}/individual/{individualName}", username, individualName)
+                .accept(MediaType.APPLICATION_JSON);
 
-	@Test
-	public void getIndividualNoIndividual() throws Exception, TooManyResultsException {
-		String username = "toto";
-		String individualName = "titi";
-		User user = new User(username);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String body = result.getResponse().getContentAsString();
+        MockHttpServletResponse response = result.getResponse();
 
-		Mockito.when(userDataService.getUserByName(username)).thenReturn(user);
-		Mockito.when(individualService.findIndividualByName(user, individualName)).thenReturn(null);
+        assertThat(response.getStatus(), equalTo(HttpStatus.BAD_REQUEST.value()));
+    }
 
-		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get("/user/{username}/individual/{individualName}", username, individualName)
-				.accept(MediaType.APPLICATION_JSON);
+    @Test
+    public void getIndividualNoIndividual() throws Exception, TooManyResultsException {
+        String username = "toto";
+        String individualName = "titi";
+        User user = new User(username);
 
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		String body = result.getResponse().getContentAsString();
-		MockHttpServletResponse response = result.getResponse();
+        Mockito.when(userDataService.getUserByName(username)).thenReturn(user);
+        Mockito.when(individualService.findIndividualByName(user, individualName)).thenReturn(null);
 
-		assertThat(response.getStatus(), equalTo(HttpStatus.NOT_FOUND.value()));
-	}
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/user/{username}/individual/{individualName}", username, individualName)
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String body = result.getResponse().getContentAsString();
+        MockHttpServletResponse response = result.getResponse();
+
+        assertThat(response.getStatus(), equalTo(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    public void getIndividualNatalTheme() throws Exception, TooManyResultsException {
+        String username = "toto";
+        String individualName = "titi";
+        User user = new User(username);
+        Individual individual = new Individual(individualName);
+        individual.setNatalTheme(testSkyPosition);
+
+        Mockito.when(userDataService.getUserByName(username)).thenReturn(user);
+        Mockito.when(individualService.findIndividualByName(user, individualName)).thenReturn(individual);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/user/{username}/individual/{individualName}/theme", username, individualName)
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String body = result.getResponse().getContentAsString();
+        MockHttpServletResponse response = result.getResponse();
+
+        assertThat(response.getStatus(), equalTo(HttpStatus.OK.value()));
+        assertThat(body, hasJsonPath("positions.ASCENDANT.sign", equalTo("POISSONS")));
+    }
+
+    @Test
+    public void createIndividual() throws Exception {
+        String username = "toto";
+        String individualName = "titi";
+        User user = new User(username);
+        Individual individual = new Individual(individualName);
+        individual.setNatalTheme(testSkyPosition);
+
+        Mockito.when(userDataService.getUserByName(username)).thenReturn(user);
+        //Mockito.when(individualService.createIndividual(user, individualName, Mockito.any(SkyPosition.class))).thenReturn(testSkyPosition);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/user/{username}/individual/{individualName}/{datetime}/{latitude:.+}/{longitude:.+}",
+                        username, individualName, TEST_NATAL_DATE_STRING, NATAL_LATITUDE.getBaseDegree(), NATAL_LONGITUDE.getBaseDegree())
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String body = result.getResponse().getContentAsString();
+        MockHttpServletResponse response = result.getResponse();
+
+        assertThat(response.getStatus(), equalTo(HttpStatus.CREATED.value()));
+    }
 }
