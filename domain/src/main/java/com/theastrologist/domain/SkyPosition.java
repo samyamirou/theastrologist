@@ -6,14 +6,16 @@ import com.theastrologist.domain.aspect.AspectPosition;
 import com.theastrologist.util.CalcUtil;
 import com.theastrologist.util.DateUtil;
 import org.apache.log4j.Logger;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.*;
 import org.joda.time.DateTime;
 import swisseph.SweConst;
 import swisseph.SweDate;
 import swisseph.SwissEph;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.*;
 
 
@@ -37,15 +39,19 @@ public class SkyPosition {
 	@JsonAdapter(DateTimeJSONAdapter.class)
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime date;
+
 	@Embedded
 	@AttributeOverride(name="baseDegree",column=@Column(name="latitude"))
 	private final Degree latitude;
+
 	@Embedded
 	@AttributeOverride(name="baseDegree",column=@Column(name="longitude"))
 	private final Degree longitude;
 	private String address;
 
-	@Transient
+	@OneToMany(cascade = CascadeType.ALL)
+	@MapKeyEnumerated(EnumType.STRING)
+	@SortNatural
 	private SortedMap<Planet, PlanetPosition> positions = new TreeMap<>();
 
 	@Transient

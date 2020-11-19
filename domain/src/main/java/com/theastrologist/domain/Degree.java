@@ -4,7 +4,6 @@ import com.google.common.math.DoubleMath;
 import com.google.common.primitives.Ints;
 import com.theastrologist.util.CalcUtil;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 import java.io.Serializable;
@@ -26,7 +25,7 @@ public class Degree implements Serializable, Comparable<Degree> {
     @Transient
     private transient double seconds;
     @Transient
-    private static Pattern pattern = Pattern.compile("(.+)°(.+)'");
+    private static final Pattern PATTERN = Pattern.compile("(.+)°(.+)'");
 
     public Degree() {
     }
@@ -68,8 +67,8 @@ public class Degree implements Serializable, Comparable<Degree> {
     }
 
     public Degree(String nextString) throws IllegalArgumentException {
-        String exceptionMessage = nextString + " is not parseable to this format : xx°xx'";
-        Matcher matcher = pattern.matcher(nextString);
+        String exceptionMessage = nextString + " is not parsable to this format : xx°xx'";
+        Matcher matcher = PATTERN.matcher(nextString);
         List<Integer> integers = new ArrayList<>(2);
         if (matcher.find()) {
             for (int i = 0; i < 2; i++) {

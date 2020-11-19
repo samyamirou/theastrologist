@@ -5,7 +5,7 @@ import com.theastrologist.domain.Degree;
 
 import java.lang.reflect.Type;
 
-public class DegreeJsonDeserializer implements JsonSerializer<Degree> {
+public class DegreeJsonSerializer implements JsonSerializer<Degree> {
     @Override
     public JsonElement serialize(Degree degree, Type type, JsonSerializationContext jsonSerializationContext) {
 

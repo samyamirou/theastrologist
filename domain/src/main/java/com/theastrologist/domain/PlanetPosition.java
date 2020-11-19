@@ -1,16 +1,47 @@
 package com.theastrologist.domain;
 
 import com.theastrologist.util.CalcUtil;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
+import java.util.UUID;
+
+@Entity
+@Table(name = "PlanetPositions")
 public class PlanetPosition {
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", columnDefinition = "VARCHAR(255)")
+    private UUID id;
+
+    @Enumerated(EnumType.STRING)
     private Sign sign;
+
+    @Embedded
+    @AttributeOverride(name="baseDegree",column=@Column(name="degree"))
     private Degree degree;
+
+    @Embedded
+    @AttributeOverride(name="baseDegree",column=@Column(name="degreeInSign"))
     private Degree degreeInSign;
-    private final SignDecan decanInSign;
+
+    @Embedded
+    private SignDecan decanInSign;
+
+    @Enumerated(EnumType.STRING)
     private House house;
+
+    @Enumerated(EnumType.STRING)
     private Degree degreeInHouse;
-    private final HouseDecan decanInHouse;
+
+    @Embedded
+    private HouseDecan decanInHouse;
+
     private boolean retrograde = false;
+
+    public PlanetPosition() {
+    }
 
     public PlanetPosition(Degree degree, Sign sign, House house, Degree degreeInSign, Degree degreeInHouse) {
         this.degree = degree;

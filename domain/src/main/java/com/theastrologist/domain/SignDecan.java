@@ -1,9 +1,29 @@
 package com.theastrologist.domain;
 
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Transient;
+
+@Embeddable
 public class SignDecan extends Decan {
 
-    private final Sign baseSign;
-    private final Sign relatedSign;
+    @Enumerated(EnumType.STRING)
+    private Sign baseSign;
+
+    @Enumerated(EnumType.STRING)
+    private Sign relatedSign;
+
+    public SignDecan() {
+        super();
+    }
+
+    // Pour la serialization
+    public SignDecan(Sign baseSign, Sign relatedSign) {
+        this.baseSign = baseSign;
+        this.relatedSign = relatedSign;
+        this.decanNumber = calculateDecan(baseSign.getSignNumber(), relatedSign.getSignNumber());
+    }
 
     public SignDecan(Degree relativeDegree, Sign baseSign) {
         super(relativeDegree);

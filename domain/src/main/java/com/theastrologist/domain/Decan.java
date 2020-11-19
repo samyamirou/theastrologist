@@ -1,9 +1,13 @@
 package com.theastrologist.domain;
 
 
-public abstract class Decan  implements SkyArtefact {
+public abstract class Decan implements SkyArtefact {
     protected int decanNumber;
+
     protected transient Degree relativeDegree;
+
+    public Decan() {
+    }
 
     public Decan(Degree relativeDegree) {
         this.relativeDegree = relativeDegree;
@@ -28,5 +32,23 @@ public abstract class Decan  implements SkyArtefact {
             resultedHouseNumber = resultedHouseNumber - 12;
         }
         return resultedHouseNumber;
+    }
+
+    protected int calculateDecan(int signOrHouse, int relatedSignOrHouse) {
+
+        int decan;
+        int difference = relatedSignOrHouse - signOrHouse;
+
+        if(Math.abs(difference) != 4 && Math.abs(difference) != 8 && Math.abs(difference) != 0) {
+            throw new IllegalArgumentException("House / Sign and related must have 0, 4 or 8 of difference");
+        }
+
+        if(difference < 0) {
+            difference += 12;
+        }
+
+        decan = difference / 4 + 1;
+
+        return decan;
     }
 }
