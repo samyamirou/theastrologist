@@ -34,6 +34,12 @@
             <version>${spring.boot.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.core</artifactId>
+            <version>7.0.0.CR1</version>
+        </dependency>
+
         <!--<dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>

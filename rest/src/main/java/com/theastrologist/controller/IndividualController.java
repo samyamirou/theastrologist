@@ -8,6 +8,8 @@ import com.theastrologist.domain.individual.Individual;
 import com.theastrologist.domain.user.User;
 import com.theastrologist.exception.IndividualAlreadyExistsException;
 import com.theastrologist.exception.TooManyResultsException;
+import com.theastrologist.external.geoloc.GeoResult;
+import com.theastrologist.external.geoloc.GeolocException;
 import com.theastrologist.service.IndividualService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,11 +71,45 @@ public class IndividualController extends AbstractController {
             @ApiParam(value = "Theme location longitude", required = true) @PathVariable double longitude) throws NoResultsFoundException, IndividualAlreadyExistsRestException {
         User user = getUser(userName);
 
-        Individual individual;
-
-		SkyPosition skyPosition = getSkyPosition(datetime, latitude, longitude, null);
+        SkyPosition skyPosition = getSkyPosition(datetime, latitude, longitude, null);
 		try {
-            individual = individualService.createIndividual(user, individualName, skyPosition);
+            Individual individual = individualService.createIndividual(user, individualName, skyPosition);
+        } catch (IndividualAlreadyExistsException e) {
+            throw new IndividualAlreadyExistsRestException();
+        }
+
+        URI location = ServletUriComponentsBuilder.fromPath("/user/")
+                .path(user.getUserName())
+                .path("/individual/")
+                .path(individualName)
+                .buildAndExpand(individualName)
+                .toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+
+    @ApiOperation(value = "Create individual", produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "Individual not found"),
+            @ApiResponse(code = 404, message = "User not found"),
+            @ApiResponse(code = 400, message = "Too many individuals found")
+    })
+    @PostMapping(value = "/user/{userName}/individual/{individualName}/{datetime}/{address}")
+    public ResponseEntity<Void> createIndividual(
+            @ApiParam(value = "User Name", required = true) @PathVariable String userName,
+            @ApiParam(value = "Individual Name", required = true) @PathVariable String individualName,
+            @ApiParam(value = "Theme date and time. ISO Datetime format, ex : 2018-01-22T22:04:19", required = true) @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) String datetime,
+            @ApiParam(value = "Theme location. Ex : '75015, FR', '1600 Amphitheatre Pkwy, Mountain View, CA 94043'", required = true) @PathVariable String address) throws NoResultsFoundException, IndividualAlreadyExistsRestException, GeolocException {
+        User user = getUser(userName);
+
+        GeoResult geoResult = queryForGeoloc(address);
+        double latitude = geoResult.getGeometry().getLocation().getLat();
+        double longitude = geoResult.getGeometry().getLocation().getLng();
+
+        SkyPosition skyPosition = getSkyPosition(datetime, latitude, longitude, null);
+        try {
+            Individual individual = individualService.createIndividual(user, individualName, skyPosition);
         } catch (IndividualAlreadyExistsException e) {
             throw new IndividualAlreadyExistsRestException();
         }

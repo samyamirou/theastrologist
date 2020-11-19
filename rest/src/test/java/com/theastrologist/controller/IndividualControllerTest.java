@@ -42,6 +42,7 @@ import static org.junit.Assert.*;
 public class IndividualControllerTest {
 
 
+    private static final String NATAL_ADDRESS = "Ris-Orangis";
     private final String TEST_NATAL_DATE_STRING = "1985-01-04T11:20:00";
     private final DateTime TEST_NATAL_DATE = new DateTime(1985,1,4,11,20 ,CalcUtil.DATE_TIME_ZONE);
     private final Degree NATAL_LATITUDE = new Degree(48, 39);
@@ -210,6 +211,29 @@ public class IndividualControllerTest {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/user/{username}/individual/{individualName}/{datetime}/{latitude:.+}/{longitude:.+}",
                         username, individualName, TEST_NATAL_DATE_STRING, NATAL_LATITUDE.getBaseDegree(), NATAL_LONGITUDE.getBaseDegree())
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String body = result.getResponse().getContentAsString();
+        MockHttpServletResponse response = result.getResponse();
+
+        assertThat(response.getStatus(), equalTo(HttpStatus.CREATED.value()));
+    }
+
+    @Test
+    public void createIndividualAddress() throws Exception {
+        String username = "toto";
+        String individualName = "titi";
+        User user = new User(username);
+        Individual individual = new Individual(individualName);
+        individual.setNatalTheme(testSkyPosition);
+
+        Mockito.when(userDataService.getUserByName(username)).thenReturn(user);
+        //Mockito.when(individualService.createIndividual(user, individualName, Mockito.any(SkyPosition.class))).thenReturn(testSkyPosition);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/user/{username}/individual/{individualName}/{datetime}/{address}",
+                        username, individualName, TEST_NATAL_DATE_STRING, NATAL_ADDRESS)
                 .accept(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();

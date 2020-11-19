@@ -7,6 +7,7 @@ import com.theastrologist.util.CalcUtil;
 import com.theastrologist.util.DateUtil;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import swisseph.SweConst;
 import swisseph.SweDate;
@@ -33,9 +34,10 @@ public class SkyPosition {
 
 	static final Logger LOG = Logger.getLogger(SkyPosition.class);
 	@JsonAdapter(DateTimeJSONAdapter.class)
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime date;
-	private final Degree latitude;
-	private final Degree longitude;
+	private Degree latitude;
+	private Degree longitude;
 	private String address;
 
 	@Transient

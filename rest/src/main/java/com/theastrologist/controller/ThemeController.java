@@ -4,7 +4,9 @@ import com.theastrologist.controller.exception.NoResultsFoundException;
 import com.theastrologist.domain.individual.Individual;
 import com.theastrologist.domain.SkyPosition;
 import com.theastrologist.external.geoloc.*;
+import com.theastrologist.util.TimeService;
 import io.swagger.annotations.*;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Api(value = "/theme", tags = "Theme", description = "Astrological theme")
 public class ThemeController extends AbstractController {
+	private static final Logger LOGGER = Logger.getLogger(ThemeController.class);
+
 
 	@Autowired
 	private IndividualController individualController;
@@ -65,6 +69,7 @@ public class ThemeController extends AbstractController {
 			@ApiParam(value = "User Name", required = true) @PathVariable String userName,
 			@ApiParam(value = "Individual Name", required = true) @PathVariable String individualName) throws NoResultsFoundException {
 		Individual individual = individualController.getIndividual(userName, individualName);
+		LOGGER.warn("Natal Theme : " + individual.getNatalTheme());
 		return individual.getNatalTheme();
 	}
 }

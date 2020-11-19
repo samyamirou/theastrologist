@@ -23,7 +23,7 @@ public class Individual {
 
 	private String name;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name = "natal_theme_id")
 	private SkyPosition natalTheme;
 
@@ -35,6 +35,7 @@ public class Individual {
 
 	public Individual(String name, SkyPosition natalTheme) {
 		this(name);
+		this.natalTheme = natalTheme;
 	}
 
 	public String getName() {
