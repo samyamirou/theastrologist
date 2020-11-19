@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by SAM on 16/11/2014.
  */
 @RestController
-@Api(value = "/theme", tags = "Theme", description = "Astrological theme")
+@Api(value = "/theme", tags = "Theme")
 public class ThemeController extends AbstractController {
 	private static final Logger LOGGER = Logger.getLogger(ThemeController.class);
 
@@ -54,7 +54,7 @@ public class ThemeController extends AbstractController {
 		double longitude = geoResult.getGeometry().getLocation().getLng();
 
 		SkyPosition skyPosition = getSkyPosition(datetime, latitude, longitude, geoResult.getFormatted_address());
-		return new ResponseEntity<SkyPosition>(skyPosition, HttpStatus.OK);
+		return new ResponseEntity<>(skyPosition, HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Get Individual Natal Theme", produces = "application/json")
@@ -69,7 +69,6 @@ public class ThemeController extends AbstractController {
 			@ApiParam(value = "User Name", required = true) @PathVariable String userName,
 			@ApiParam(value = "Individual Name", required = true) @PathVariable String individualName) throws NoResultsFoundException {
 		Individual individual = individualController.getIndividual(userName, individualName);
-		LOGGER.warn("Natal Theme : " + individual.getNatalTheme());
 		return individual.getNatalTheme();
 	}
 }

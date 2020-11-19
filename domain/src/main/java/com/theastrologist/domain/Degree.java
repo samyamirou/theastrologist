@@ -4,6 +4,7 @@ import com.google.common.math.DoubleMath;
 import com.google.common.primitives.Ints;
 import com.theastrologist.util.CalcUtil;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 import java.io.Serializable;
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
  */
 @Embeddable
 public class Degree implements Serializable, Comparable<Degree> {
-    private transient double baseDegree;
+    private double baseDegree;
     @Transient
     private int degree;
     @Transient
@@ -26,6 +27,9 @@ public class Degree implements Serializable, Comparable<Degree> {
     private transient double seconds;
     @Transient
     private static Pattern pattern = Pattern.compile("(.+)°(.+)'");
+
+    public Degree() {
+    }
 
     public Degree(double decimalDegree) {
         this.baseDegree = decimalDegree;

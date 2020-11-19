@@ -2,6 +2,7 @@ package com.theastrologist.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.theastrologist.domain.Degree;
 import com.theastrologist.domain.HibernateProxyTypeAdapter;
 import com.theastrologist.serializer.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -39,6 +40,8 @@ public class GsonHttpMessageConverterConfig {
 				.registerTypeAdapter(SecurityConfiguration.class, new SpringfoxSecurityConfigurationJsonSerializer())
 				// Pour Hibernate
 				.registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
+				// Pour Degree
+				.registerTypeAdapter(Degree.class, new DegreeJsonDeserializer())
 				.enableComplexMapKeySerialization()
 				.setPrettyPrinting()
 				.setDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'")

@@ -24,7 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@Api(value = "/user/{userName}/individual", tags = "Individuals", description = "Individuals")
+@Api(value = "/user/{userName}/individual", tags = "Individuals")
 public class IndividualController extends AbstractController {
     @Autowired
     private IndividualService individualService;
@@ -42,7 +42,7 @@ public class IndividualController extends AbstractController {
             @ApiParam(value = "Individual Name", required = true) @PathVariable String individualName) throws NoResultsFoundException {
         User user = getUser(userName);
 
-        Individual individual = null;
+        Individual individual;
         try {
             individual = individualService.findIndividualByName(user, individualName);
         } catch (TooManyResultsException e) {
@@ -107,7 +107,7 @@ public class IndividualController extends AbstractController {
         double latitude = geoResult.getGeometry().getLocation().getLat();
         double longitude = geoResult.getGeometry().getLocation().getLng();
 
-        SkyPosition skyPosition = getSkyPosition(datetime, latitude, longitude, null);
+        SkyPosition skyPosition = getSkyPosition(datetime, latitude, longitude, geoResult.getFormatted_address());
         try {
             Individual individual = individualService.createIndividual(user, individualName, skyPosition);
         } catch (IndividualAlreadyExistsException e) {

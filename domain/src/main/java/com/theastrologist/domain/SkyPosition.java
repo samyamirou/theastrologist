@@ -26,25 +26,30 @@ import java.util.*;
 @Table(name = "SkyPositions")
 public class SkyPosition {
 
+	static final Logger LOG = Logger.getLogger(SkyPosition.class);
+
 	@Id
 	@GeneratedValue(generator = "uuid2")
 	@GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
 	@Column(name = "id", columnDefinition = "VARCHAR(255)")
 	private UUID id;
 
-	static final Logger LOG = Logger.getLogger(SkyPosition.class);
 	@JsonAdapter(DateTimeJSONAdapter.class)
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime date;
-	private Degree latitude;
-	private Degree longitude;
+	@Embedded
+	@AttributeOverride(name="baseDegree",column=@Column(name="latitude"))
+	private final Degree latitude;
+	@Embedded
+	@AttributeOverride(name="baseDegree",column=@Column(name="longitude"))
+	private final Degree longitude;
 	private String address;
 
 	@Transient
-	private SortedMap<Planet, PlanetPosition> positions = new TreeMap<Planet, PlanetPosition>();
+	private SortedMap<Planet, PlanetPosition> positions = new TreeMap<>();
 
 	@Transient
-	private transient Map<House, HousePosition> houseMap = new HashMap<House, HousePosition>();
+	private transient Map<House, HousePosition> houseMap = new HashMap<>();
 
 	// Champs pour le calcul des aspects
 	@Transient
